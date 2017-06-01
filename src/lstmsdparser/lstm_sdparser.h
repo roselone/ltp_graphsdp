@@ -142,21 +142,18 @@ public:
                      //const std::vector<string>& setOfActions,
                      //const map<unsigned, std::string>& intToWords,
                      double *right, 
-                     std::vector<std::vector<string>>& cand,
-                     std::vector<Expression>* word_rep = NULL,
-                     Expression * act_rep = NULL);
+                     std::vector<std::vector<string>>& cand);
 
-  int process_headless(std::vector<std::vector<string>>& hyp, std::vector<std::vector<string>>& cand, std::vector<Expression>& word_rep, 
-                                    Expression& act_rep, const std::vector<unsigned>& sent, const std::vector<unsigned>& sentPos);
+  int process_headless(std::vector<std::vector<string>>& hyp, std::vector<std::vector<string>>& cand, 
+                                    const std::vector<unsigned>& sent, const std::vector<unsigned>& sentPos);
 
   void process_headless_search_all(const std::vector<unsigned>& sent, const std::vector<unsigned>& sentPos, 
-                                                        const std::vector<string>& setOfActions, std::vector<Expression>& word_rep, 
-                                                        Expression& act_rep, int n, int sent_len, int dir, map<int, double>* scores, 
+                                                        const std::vector<string>& setOfActions, int n, int sent_len, int dir, map<int, double>* scores, 
                                                         map<int, string>* rels);
 
   void get_best_label(const std::vector<unsigned>& sent, const std::vector<unsigned>& sentPos, 
                                     ComputationGraph* hg, const std::vector<string>& setOfActions, 
-                                    int s0, int b0, std::vector<Expression>& word_rep, Expression& act_rep, int sent_size, 
+                                    int s0, int b0, int sent_size, 
                                     int dir, double *score, string *rel);
 
   static void signal_callback_handler(int /* signum */);
