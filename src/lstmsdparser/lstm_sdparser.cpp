@@ -115,9 +115,9 @@ bool LSTMParser::setup_dynet(){
   //allocate memory for dynet
   char ** dy_argv = new char * [6];
   int dy_argc = 3;
-  dy_argv[0] = "dynet";
-  dy_argv[1] = "--dynet-mem";
-  dy_argv[2] = "2000";
+  dy_argv[0] = (char*)"dynet";
+  dy_argv[1] = (char*)"--dynet-mem";
+  dy_argv[2] = (char*)"2000";
   dynet::initialize(dy_argc, dy_argv);
 
   stack_lstm = LSTMBuilder(Opt.LAYERS, Opt.LSTM_INPUT_DIM, Opt.HIDDEN_DIM, model);
