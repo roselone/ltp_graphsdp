@@ -20,16 +20,23 @@ void InitCommandLine(int argc, char** argv, po::variables_map* conf) {
         ("training_data,T", po::value<string>(), "List of Transitions - Training corpus")
         ("dev_data,d", po::value<string>(), "Development corpus")
         ("test_data,p", po::value<string>(), "Test corpus")
-        ("transition_system,s", po::value<string>()->default_value("list"), "Transition system(list - listbased, spl - simplified)")
+        ("transition_system,s", po::value<string>()->default_value("list"), "Transition system(list - listbased)")
         ("data_type,k", po::value<string>()->default_value("sdpv2"), "Data type(sdpv2 - news, text - textbook)")
+        ("dynet_seed", po::value<string>(), "Dynet seed for initialization")
+        ("dynet_mem", po::value<string>()->default_value("4000"), "Dynet memory size (MB) for initialization")
         ("unk_strategy,o", po::value<unsigned>()->default_value(1), "Unknown word strategy: 1 = singletons become UNK with probability unk_prob")
         ("unk_prob,u", po::value<double>()->default_value(0.2), "Probably with which to replace singletons with UNK in training data")
         ("model,m", po::value<string>(), "Load saved model from this file")
+        ("model_dir", po::value<string>()->default_value(""), "Directory of model")
+        ("max_itr", po::value<int>()->default_value(10000), "Max training iteration")
         ("use_pos_tags,P", "make POS tags visible to parser")
+        ("use_bilstm,B", "use bilstm for buffer")
+        ("use_treelstm,R", "use treelstm for subtree in stack")
         ("layers", po::value<unsigned>()->default_value(2), "number of LSTM layers")
         ("action_dim", po::value<unsigned>()->default_value(50), "action embedding size")
         ("input_dim", po::value<unsigned>()->default_value(100), "input embedding size")
         ("hidden_dim", po::value<unsigned>()->default_value(200), "hidden dimension")
+        ("bilstm_hidden_dim", po::value<unsigned>()->default_value(100), "bilstm hidden dimension")
         ("pretrained_dim", po::value<unsigned>()->default_value(100), "pretrained input dimension")
         ("pos_dim", po::value<unsigned>()->default_value(50), "POS dimension")
         ("rel_dim", po::value<unsigned>()->default_value(50), "relation dimension")
@@ -51,6 +58,7 @@ void InitCommandLine(int argc, char** argv, po::variables_map* conf) {
 }
 
 int main(int argc, char** argv) {
+  bool DEBUG = true;
   //dynet::Initialize(argc, argv);
 
   cerr << "COMMAND:"; 
@@ -62,10 +70,11 @@ int main(int argc, char** argv) {
   //ltp::lstmsdparser::Sizes System_size;
   ltp::lstmsdparser::Options Opt;
   Opt.USE_POS = conf.count("use_pos_tags");
+  Opt.USE_BILSTM = conf.count("use_bilstm");
+  Opt.USE_TREELSTM = conf.count("use_treelstm");
+  Opt.max_itr = conf["max_itr"].as<int>();
 
   Opt.transition_system = conf["transition_system"].as<string>();
-  cerr << "Transition System: " << Opt.transition_system << endl;
-
   Opt.LAYERS = conf["layers"].as<unsigned>();
   Opt.INPUT_DIM = conf["input_dim"].as<unsigned>();
   Opt.PRETRAINED_DIM = conf["pretrained_dim"].as<unsigned>();
@@ -74,7 +83,22 @@ int main(int argc, char** argv) {
   Opt.LSTM_INPUT_DIM = conf["lstm_input_dim"].as<unsigned>();
   Opt.POS_DIM = conf["pos_dim"].as<unsigned>();
   Opt.REL_DIM = conf["rel_dim"].as<unsigned>();
+  Opt.BILSTM_HIDDEN_DIM = conf["bilstm_hidden_dim"].as<unsigned>(); // [bilstm]
 
+  if (DEBUG){
+    cerr << "Transition System: " << Opt.transition_system << endl;
+    cerr << "Max training iteration: " << Opt.max_itr << endl;
+    if (Opt.USE_BILSTM)
+      cerr << "Using bilstm for buffer." << endl;
+    if (Opt.USE_TREELSTM)
+      cerr << "Using treelstm for subtree in stack." << endl;
+  }
+  if (conf.count("dynet_seed")){
+    Opt.dynet_seed = conf["dynet_seed"].as<string>();
+  }
+  if (conf.count("dynet_mem")){
+    Opt.dynet_mem = conf["dynet_mem"].as<string>();
+  }
 
   const unsigned unk_strategy = conf["unk_strategy"].as<unsigned>();
 
@@ -88,16 +112,20 @@ int main(int argc, char** argv) {
   const double unk_prob = conf["unk_prob"].as<double>();
   assert(unk_prob >= 0.); assert(unk_prob <= 1.);
   ostringstream os;
-  os << "parser_" << (Opt.USE_POS ? "pos" : "nopos")
-     << '_' << conf["data_type"].as<string>()
-     << '_' << Opt.LAYERS
-     << '_' << Opt.INPUT_DIM
-     << '_' << Opt.HIDDEN_DIM
-     << '_' << Opt.ACTION_DIM
-     << '_' << Opt.LSTM_INPUT_DIM
-     << '_' << Opt.POS_DIM
-     << '_' << Opt.REL_DIM
-     << "-pid" << getpid() << ".params";
+  os << conf["model_dir"].as<string>() << "/"
+    << "parser_" << Opt.transition_system
+    << '_' << conf["data_type"].as<string>()
+    << (Opt.USE_POS ? "_pos" : "")
+    << (Opt.USE_BILSTM ? "_bs" : "")
+    << (Opt.USE_TREELSTM ? "_tr" : "")
+    << '_' << Opt.LAYERS
+    << '_' << Opt.INPUT_DIM
+    << '_' << Opt.HIDDEN_DIM
+    << '_' << Opt.ACTION_DIM
+    << '_' << Opt.LSTM_INPUT_DIM
+    << '_' << Opt.POS_DIM
+    << '_' << Opt.REL_DIM
+    << "-pid" << getpid() << ".params";
   
   const string fname = os.str();
   cerr << "Writing parameters to file: " << fname << endl;
@@ -106,7 +134,7 @@ int main(int argc, char** argv) {
   LSTMParser *parser = new LSTMParser();
   parser -> set_options(Opt);
 
-  parser->DEBUG = true;
+  parser->DEBUG = DEBUG;
   if (conf.count("model")){
     //parser -> load(conf["model"].as<string>(), conf["training_data"].as<string>(), 
     //              conf["words"].as<string>(), conf["dev_data"].as<string>() );

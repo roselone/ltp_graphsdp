@@ -7,8 +7,9 @@ include_directories (${SOURCE_DIR}/
 set (lstm_sdparser_VERSION "0.0.1")
 set (lstm_sdparser_SRC
     lstm_sdparser.cpp
-    c2.h
     c2.cpp
+    bilstm.cc
+    treelstm.cc
     listbased.cc
     )
 

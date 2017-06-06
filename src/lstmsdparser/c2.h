@@ -19,59 +19,67 @@
 
 namespace cpyp {
 
-inline void split(const std::string& source, const char& sep, 
-    std::vector<std::string>& ret, int maxsplit=-1) {
-  std::string str(source);
-  int numsplit = 0;
-  int len = str.size();
-  size_t pos;
-  for (pos = 0; pos < str.size() && (str[pos] == sep); ++ pos);
-  str = str.substr(pos);
+  inline std::string StrToLower(const std::string s){
+    std::string str = s;
+    for (int i = 0; i < str.length(); ++i){
+      str[i] = tolower(str[i]);
+    }
+    return str;
+  }
 
-  ret.clear();
-  while (str.size() > 0) {
-    pos = std::string::npos;
+  inline void split(const std::string& source, const char& sep, 
+                    std::vector<std::string>& ret, int maxsplit=-1) {
+    std::string str(source);
+    int numsplit = 0;
+    int len = str.size();
+    size_t pos;
+    for (pos = 0; pos < str.size() && (str[pos] == sep); ++ pos);
+    str = str.substr(pos);
 
-    for (pos = 0; pos < str.size() && (str[pos] != sep); ++ pos);
-
-    if (pos == str.size()) {
+    ret.clear();
+    while (str.size() > 0) {
       pos = std::string::npos;
-    }
 
-    if (maxsplit >= 0 && numsplit < maxsplit) {
-      ret.push_back(str.substr(0, pos));
-      ++ numsplit;
-    } else if (maxsplit >= 0 && numsplit == maxsplit) {
-      ret.push_back(str);
-      ++ numsplit;
-    } else if (maxsplit == -1) {
-      ret.push_back(str.substr(0, pos));
-      ++ numsplit;
-    }
+      for (pos = 0; pos < str.size() && (str[pos] != sep); ++ pos);
 
-    if (pos == std::string::npos) {
-      str = "";
-    } else {
-      for (; pos < str.size() && (str[pos] == sep); ++ pos);
-      str = str.substr(pos);
+      if (pos == str.size()) {
+        pos = std::string::npos;
+      }
+
+      if (maxsplit >= 0 && numsplit < maxsplit) {
+        ret.push_back(str.substr(0, pos));
+        ++ numsplit;
+      } else if (maxsplit >= 0 && numsplit == maxsplit) {
+        ret.push_back(str);
+        ++ numsplit;
+      } else if (maxsplit == -1) {
+        ret.push_back(str.substr(0, pos));
+        ++ numsplit;
+      }
+
+      if (pos == std::string::npos) {
+        str = "";
+      } else {
+        for (; pos < str.size() && (str[pos] == sep); ++ pos);
+        str = str.substr(pos);
+      }
     }
   }
-}
 
-/**
- * Return a list of words of string str, the word are separated by
- * separator.
- *
- *  @param  str         std::string     the string
- *  @param  sep         char            the separator
- *  @param  maxsplit    std::string     the sep upperbound
- *  @return             std::vector<std::string> the words
- */
-inline std::vector<std::string> split(const std::string& source, const char& sep, int maxsplit = -1) {
-  std::vector<std::string> ret;
-  split(source, sep, ret, maxsplit);
-  return ret;
-}
+  /**
+  * Return a list of words of string str, the word are separated by
+  * separator.
+  *
+  *  @param  str         std::string     the string
+  *  @param  sep         char            the separator
+  *  @param  maxsplit    std::string     the sep upperbound
+  *  @return             std::vector<std::string> the words
+  */
+  inline std::vector<std::string> split(const std::string& source, const char& sep, int maxsplit = -1) {
+    std::vector<std::string> ret;
+    split(source, sep, ret, maxsplit);
+    return ret;
+  }
 
 class Corpus {
  //typedef std::unordered_map<std::string, unsigned, std::hash<std::string> > Map;
