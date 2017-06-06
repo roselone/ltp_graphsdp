@@ -36,7 +36,7 @@ void InitCommandLine(int argc, char** argv, po::variables_map* conf) {
         ("action_dim", po::value<unsigned>()->default_value(50), "action embedding size")
         ("input_dim", po::value<unsigned>()->default_value(100), "input embedding size")
         ("hidden_dim", po::value<unsigned>()->default_value(200), "hidden dimension")
-        ("bilstm_hidden_dim", po::value<unsigned>()->default_value(100), "bilstm hidden dimension")
+        ("bilstm_hidden_dim", po::value<unsigned>()->default_value(200), "bilstm hidden dimension")
         ("pretrained_dim", po::value<unsigned>()->default_value(100), "pretrained input dimension")
         ("pos_dim", po::value<unsigned>()->default_value(50), "POS dimension")
         ("rel_dim", po::value<unsigned>()->default_value(50), "relation dimension")
