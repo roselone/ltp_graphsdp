@@ -21,7 +21,7 @@ build
 ###############
 # output      #
 ###############
-#include/
+include/
 lib/
 bin/
 tools/train/lgdpj
