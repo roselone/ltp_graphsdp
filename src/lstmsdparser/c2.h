@@ -85,45 +85,45 @@ class Corpus {
  //typedef std::unordered_map<std::string, unsigned, std::hash<std::string> > Map;
 // typedef std::unordered_map<unsigned,std::string, std::hash<std::string> > ReverseMap;
 public: 
-   bool DEBUG = false;
-   bool USE_SPELLING=false; 
+  bool DEBUG = false;
+  bool USE_SPELLING=false; 
 
-   std::map<int,std::vector<unsigned>> correct_act_sent;
-   std::map<int,std::vector<unsigned>> sentences;
-   std::map<int,std::vector<unsigned>> sentencesPos;
+  std::map<int,std::vector<unsigned>> correct_act_sent;
+  std::map<int,std::vector<unsigned>> sentences;
+  std::map<int,std::vector<unsigned>> sentencesPos;
 
-   std::map<int,std::vector<unsigned>> correct_act_sentDev;
-   std::map<int,std::vector<unsigned>> sentencesDev;
-   std::map<int,std::vector<unsigned>> sentencesPosDev;
-   std::map<int,std::vector<std::string>> sentencesStrDev;
-   unsigned nsentencesDev;
+  std::map<int,std::vector<unsigned>> correct_act_sentDev;
+  std::map<int,std::vector<unsigned>> sentencesDev;
+  std::map<int,std::vector<unsigned>> sentencesPosDev;
+  std::map<int,std::vector<std::string>> sentencesStrDev;
+  unsigned nsentencesDev;
 
-   std::map<int,std::vector<unsigned>> sentencesTest;
-   std::map<int,std::vector<unsigned>> sentencesPosTest;
-   std::map<int,std::vector<std::string>> sentencesStrTest;
-   unsigned nsentencesTest;
+  std::map<int,std::vector<unsigned>> sentencesTest;
+  std::map<int,std::vector<unsigned>> sentencesPosTest;
+  std::map<int,std::vector<std::string>> sentencesStrTest;
+  unsigned nsentencesTest;
 
-   unsigned nsentences;
-   unsigned nwords;
-   unsigned nactions;
-   unsigned npos;
+  unsigned nsentences;
+  unsigned nwords;
+  unsigned nactions;
+  unsigned npos;
 
-   unsigned nsentencestest;
-   unsigned nsentencesdev;
-   int max;
-   int maxPos;
+  unsigned nsentencestest;
+  unsigned nsentencesdev;
+  int max;
+  int maxPos;
 
-   std::map<std::string, unsigned> wordsToInt;
-   std::map<unsigned, std::string> intToWords;
-   std::vector<std::string> actions;
+  std::map<std::string, unsigned> wordsToInt;
+  std::map<unsigned, std::string> intToWords;
+  std::vector<std::string> actions;
 
-   std::map<std::string, unsigned> posToInt;
-   std::map<unsigned, std::string> intToPos;
+  std::map<std::string, unsigned> posToInt;
+  std::map<unsigned, std::string> intToPos;
 
-   // String literals
-   static const char* UNK;
-   static const char* BAD0;
-   static const char* ROOT;
+  // String literals
+  static constexpr const char* UNK = "UNK";
+  static constexpr const char* BAD0 = "<BAD0>";
+  static constexpr const char* ROOT = "ROOT";
 
 /*  std::map<unsigned,unsigned>* headsTraining;
   std::map<unsigned,std::string>* labelsTraining;
@@ -131,9 +131,7 @@ public:
   std::map<unsigned,unsigned>*  headsParsing;
   std::map<unsigned,std::string>* labelsParsing;*/
 
-
- 
- public:
+public:
   Corpus() {
     max = 0;
     maxPos = 0;
@@ -163,10 +161,10 @@ inline void load_conll_file(std::string file){
   intToWords[0] = Corpus::BAD0;
   wordsToInt[Corpus::UNK] = 1; // unknown symbol
   intToWords[1] = Corpus::UNK;
-  wordsToInt["ROOT"] = 2; // root
-  intToWords[2] = "ROOT";
-  posToInt["ROOT"] = 1; // root
-  intToPos[1] = "ROOT";
+  wordsToInt[Corpus::ROOT] = 2; // root
+  intToWords[2] = Corpus::ROOT;
+  posToInt[Corpus::ROOT] = 1; // root
+  intToPos[1] = Corpus::ROOT;
   assert(max == 0);
   assert(maxPos == 0);
   max=3;

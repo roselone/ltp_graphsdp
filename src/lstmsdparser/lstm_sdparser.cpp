@@ -298,7 +298,7 @@ vector<unsigned> LSTMParser::get_children(unsigned id, const vector<vector<bool>
   return children;
 }
 
- bool LSTMParser::IsActionForbidden(const string& a, unsigned bsize, unsigned ssize, 
+bool LSTMParser::IsActionForbidden(const string& a, unsigned bsize, unsigned ssize, 
                                       unsigned root, const vector<vector<bool>> dir_graph, //const vector<bool>  dir_graph [], 
                                       const vector<int>& stacki, const vector<int>& bufferi) {
     if (transition_system == "list"){
@@ -320,8 +320,8 @@ vector<unsigned> LSTMParser::get_children(unsigned id, const vector<vector<bool>
             if (has_path_to(s0, b0, dir_graph)) return true;
             //if (b0 == root && rel != "Root") return true;
             //if (b0 == root && rel == "Root" && root_num >= 1) return true;
-            if (b0 == (int)root && !(rel == "Root" && root_num == 0 && s0_head_num == 0)) return true;
-            if (b0 != (int)root && rel == "Root") return true;
+            if (b0 == (int)root && !(cpyp::StrToLower(rel) == "root" && root_num == 0 && s0_head_num == 0)) return true;
+            if (b0 != (int)root && cpyp::StrToLower(rel) == "root") return true;
         }
         if (a[0] == 'R'){
             if (bsize < 2 || ssize < 2) return true;
@@ -334,41 +334,8 @@ vector<unsigned> LSTMParser::get_children(unsigned id, const vector<vector<bool>
             if (a[1] == 'R' && !(ssize > 1 && s0_head_num > 0)) return true;
             if (a[1] == 'P' && !(ssize > 1 && bsize > 1))  return true;
         }
-        return false;
-  }
-    else if (transition_system == "spl"){
-        int s0 = stacki.back();
-        int b0 = bufferi.back();
-        int root_num = 0;
-        int s0_head_num = 0;
-        for (int i = 0; i < (int)dir_graph[root].size(); ++i)
-            if (dir_graph[root][i])
-                root_num ++;
-        if (s0 >= 0)
-            for (int i = 0; i < (int)dir_graph[root].size(); ++i)
-                if (dir_graph[i][s0])
-                    s0_head_num ++;
-        if (a[0] == 'L'){
-            string rel = a.substr(3, a.size() - 4);
-            if (bsize < 2 || ssize < 2) return true;
-            if (has_path_to(s0, b0, dir_graph)) return true;
-            //if (b0 == root && rel != "Root") return true;
-            //if (b0 == root && rel == "Root" && root_num >= 1) return true;
-            if (b0 == (int)root && !(rel == "Root" && root_num == 0 && s0_head_num == 0)) return true;
-            if (b0 != (int)root && rel == "Root") return true;
-        }
-        if (a[0] == 'R'){
-            if (bsize < 2 || ssize < 2) return true;
-            if (has_path_to(b0, s0, dir_graph)) return true;
-            if (b0 == (int)root) return true;
-        }
-        if (a[0] == 'N'){
-            if (a[1] == 'S' && bsize < 2) return true;
-            //if (a[1] == 'S' && bsize == 2 && ssize > 2) return true;
-            if (a[1] == 'P' && !(ssize > 1 && bsize > 1))  return true;
-        }
-        return false;
-  }
+      return false;
+    }
     return false;
 }
 
