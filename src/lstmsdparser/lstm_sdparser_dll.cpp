@@ -48,7 +48,9 @@ public:
 void * lstmsdparser_create_parser(const char * model_dir) {
   __ltp_dll_lstmsdparser_wrapper* wrapper = new __ltp_dll_lstmsdparser_wrapper();
   std::string model_file = model_dir;
-
+  wrapper -> Opt.USE_BILSTM = true;
+  wrapper -> Opt.USE_TREELSTM = true;
+  wrapper -> Opt.PRETRAINED_DIM = 50;
   if (!wrapper->load(model_file.c_str())) {
     delete wrapper;
     return 0;

@@ -320,7 +320,10 @@ bool LSTMParser::IsActionForbidden(const string& a, unsigned bsize, unsigned ssi
             if (has_path_to(s0, b0, dir_graph)) return true;
             //if (b0 == root && rel != "Root") return true;
             //if (b0 == root && rel == "Root" && root_num >= 1) return true;
+            
             if (b0 == (int)root && !(cpyp::StrToLower(rel) == "root" && root_num == 0 && s0_head_num == 0)) return true;
+            //This change is only for sem15. In sem16 you should use the line above!
+            //if (b0 == (int)root && !(cpyp::StrToLower(rel) == "root" || cpyp::StrToLower(rel) == "-null-")) return true;
             if (b0 != (int)root && cpyp::StrToLower(rel) == "root") return true;
         }
         if (a[0] == 'R'){
